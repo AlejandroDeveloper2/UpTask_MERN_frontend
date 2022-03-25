@@ -181,14 +181,16 @@ const ProjectsProvider=({children})=>{
         setModalForm(!modalForm)
         setTask({})
     }
-    const submitTask= async (task) =>{
-        if(task?.id){
-           await editTask(task)
+    const submitTask= async (task, id) =>{
+        console.log(id)
+        if(id){
+           await editTask(task, id)
         }else{
            await addTask(task)
         }
     }
-    const addTask = async  task => {
+    const addTask = async  task => {      
+        console.log(task)
         try {
             const token=localStorage.getItem('token')
             if(!token)return
@@ -198,17 +200,16 @@ const ProjectsProvider=({children})=>{
                     Authorization:  `Bearer ${token}`       
                 }
             }
-            const {data}=await axiosClient.post('/tasks', task, config)        
+            const {data}=await axiosClient.post('/tasks', task, config)     
             setAlert({})
             setModalForm(false)
             //Socket io
-            socket.emit('new task', data)
-            
+            socket.emit('new task', data)      
         } catch (error) {
-            console.log(error)
+            console.log(error.response.data.msg)
         }
     }
-    const editTask= async task=>{
+    const editTask= async (task, id)=>{
         // console.log(task, id)
         try {
             const token=localStorage.getItem('token')
@@ -219,7 +220,7 @@ const ProjectsProvider=({children})=>{
                     Authorization:  `Bearer ${token}`       
                 }
             }
-            const {data}=await axiosClient.put(`/tasks/${task.id}`, task, config)
+            const {data}=await axiosClient.put(`/tasks/${id}`, task, config)
            
             setAlert({})
             setModalForm(false)
@@ -294,7 +295,7 @@ const ProjectsProvider=({children})=>{
     const addCollaborator =async email=>{
         try {
             const token=localStorage.getItem('token')
-            if(!token)return
+            if(!token){return}
             const config={
                 headers:{
                     "Content-Type": "application/json",

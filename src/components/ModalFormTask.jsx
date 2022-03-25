@@ -17,10 +17,10 @@ const ModalFormTask = () => {
         description:"",
         deliveryDate:"",
         priority:"",
-        project:params.id
+        project:params.id,
     })
 
-    const {name, description, deliveryDate,priority} =taskData
+    const {name, description, deliveryDate, priority} =taskData
 
     const handleChange = e =>{
         setTaskData({...taskData, [e.target.name]:e.target.value})
@@ -53,7 +53,7 @@ const ModalFormTask = () => {
             })
             return
         }
-        await submitTask({id, name, description, deliveryDate, priority})
+        await submitTask(taskData, id)
         
         setId('')
         setTaskData({
